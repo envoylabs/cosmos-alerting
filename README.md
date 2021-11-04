@@ -31,6 +31,8 @@ You should get the response:
 
 ### Deployment
 
+The scripts folder has a script that can be used to check a host, e.g. for a testnet. For live you will need to likely query metrics from another box and use more complex `jq` options.
+
 ```
 $ serverless deploy
 ```
@@ -68,6 +70,13 @@ layers:
   None
 ```
 
+You will then need to:
+
+- Add an env var for the `API_TOKEN`, using a generated UUID
+- Add an env var for the `PHONE_NUMBER`, pointing to the number you want to use
+- Configure permissions so the lambda can talk to SNS
+- Set up SNS to text the number specified
+
 _Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
 
 ### Invocation
@@ -75,7 +84,7 @@ _Note_: In current form, after deployment, your API is public and can be invoked
 After successful deployment, you can call the created application via HTTP (pass similar args to the dev example above):
 
 ```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
+curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/ -d '{"message": "Voting power is 0 for moniker foo on network bar", "apiToken": "uuid-here"}'
 ```
 
 Which should result in response similar to the following (removed `input` content for brevity):
